@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  batch_id: 
+  certificate: one
+  issuer_wallet: MyString
+  total_tokens: 1
+  tokens_per_hectare: 1
+  metadata_cid: MyString
+  minted_tx_hash: MyString
+
+two:
+  batch_id: 
+  certificate: two
+  issuer_wallet: MyString
+  total_tokens: 1
+  tokens_per_hectare: 1
+  metadata_cid: MyString
+  minted_tx_hash: MyString

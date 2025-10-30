@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  buyer_wallet: MyString
+  batch: one
+  amount: 1
+  tx_hash: MyString
+  paid_via: MyString
+
+two:
+  buyer_wallet: MyString
+  batch: two
+  amount: 1
+  tx_hash: MyString
+  paid_via: MyString

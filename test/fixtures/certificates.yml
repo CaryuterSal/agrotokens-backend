@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  certificate_cid: MyString
+  uploader_wallet: MyString
+  parsed_json: 
+  hectares: 1.5
+  location_text: MyString
+  geo: 
+  status: MyString
+  confidence: 1.5
+  metadata_cid: MyString
+
+two:
+  certificate_cid: MyString
+  uploader_wallet: MyString
+  parsed_json: 
+  hectares: 1.5
+  location_text: MyString
+  geo: 
+  status: MyString
+  confidence: 1.5
+  metadata_cid: MyString
