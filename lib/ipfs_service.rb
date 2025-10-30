@@ -2,7 +2,7 @@
 
 class IpfsService
   BASE_URL = "https://api.pinata.cloud/pinning/pinFileToIPFS"
-  DOWNLOAD_URL = "https://ipfs.io/ipfs/"
+  DOWNLOAD_URL = "https://ivory-gigantic-whitefish-149.mypinata.cloud/ipfs/"
 
   def self.upload(file)
     response = HTTParty.post(
@@ -24,6 +24,15 @@ class IpfsService
   end
 
   def self.download(cid)
-    HTTParty.get("#{DOWNLOAD_URL}#{cid}").body
+    response = HTTParty.get("#{DOWNLOAD_URL}#{cid}")
+
+    raise "Error descargando archivo desde IPFS" unless response.success?
+
+    # Crear un archivo temporal con el contenido
+    temp_file = Tempfile.new(["ipfs_", ".pdf"], binmode: true)
+    temp_file.write(response.body)
+    temp_file.rewind
+
+    temp_file
   end
 end

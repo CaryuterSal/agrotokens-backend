@@ -1,45 +1,53 @@
 class SorobanService
   SOROBAN_RPC = "https://rpc-futurenet.stellar.org"
   NETWORK = "futurenet"
-  CONTRACT_ID = ENV["CONTRACT_ID"]
+  CONTRACT_ID = ENV["SBN_CONTRACT_ID"]
+  NETWORK_PASSPHRASE = "Test SDF Future Network ; October 2022"
 
-  # Crear la transacción sin firmar
-  def self.build_unsigned_certificate_tx(cert, gov_wallet_address)
-    client = Soroban::Client.new(rpc_server: SOROBAN_RPC, network: NETWORK)
+  # ✅ Genera transacción sin firmar (usando la CLI soroban)
+  def self.build_unsigned_certificate_tx(cert, gov_wallet)
+    lat_micro = (cert.geo["lat"].to_f * 1_000_000).to_i
+    lon_micro = (cert.geo["lon"].to_f * 1_000_000).to_i
 
-    operation = Soroban::Operation.invoke_contract(
-      contract_id: ENV['CONTRACT_ID'],
-      function: "certificate",
-      params: [
-        gov_wallet_address,
-        cert.uploader_wallet,
-        cert.location_text,
-        (cert.geo["lat"].to_f * 1_000_000).to_i,
-        (cert.geo["lon"].to_f * 1_000_000).to_i,
-        cert.certificate_cid,
-        cert.hectares.to_i,
-        "CO2-100",
-        10
-      ]
-    )
+    cmd = <<~CMD
+      #{ENV["SBN_PATH"]} contract invoke \
+        --rpc-url #{SOROBAN_RPC} \
+        --network #{NETWORK} \
+        --network-passphrase "#{NETWORK_PASSPHRASE}" \
+        --id #{CONTRACT_ID} \
+        -s #{gov_wallet} \
+        --build-only \
+        -- \
+        certificate \
+        --gov #{gov_wallet} \
+        --owner #{cert.uploader_wallet} \
+        --name "#{cert.location_text}" \
+        --lat-micro #{lat_micro} \
+        --lon-micro #{lon_micro} \
+        --certificate "#{cert.certificate_cid}" \
+        --hectares #{cert.hectares.to_i} \
+        --carbon-offset "CO2-100" \
+        --tokens-per-hectare 10
+    CMD
 
-    tx = client.build_transaction(
-      source_account: gov_wallet_address,
-      operations: [operation],
-      fee: 100,
-      timeout: 300
-    )
+    xdr, stderr, status = Open3.capture3(cmd)
 
-    # Esto es lo que guardas en la tabla certificates
-    tx.to_xdr(:base64)
+    if status.success?
+      puts "✅ Transacción creada: #{xdr}"
+    else
+      raise "Error creando transacción: #{stderr}" unless $?.success?
+    end
+
+    xdr.strip
   end
 
-  # Enviar una transacción firmada
+  # ✅ Enviar transacción firmada (desde el frontend)
   def self.submit_transaction(signed_tx)
     response = HTTParty.post("#{SOROBAN_RPC}/sendTransaction", {
       headers: { "Content-Type" => "application/json" },
       body: { transaction: signed_tx }.to_json
     })
+
     raise "Error en envío: #{response.body}" unless response.code == 200
     JSON.parse(response.body)
   end

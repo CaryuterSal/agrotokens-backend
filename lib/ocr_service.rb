@@ -16,13 +16,8 @@ class OcrService
     "xochitepec" => [18.7808, -99.23049]
   }
   def self.parse(file)
-    filename = file.respond_to?(:original_filename) ? file.original_filename : File.basename(file.path)
-    tmp = Tempfile.new(["cert", File.extname(filename)])
-    tmp.binmode
-    tmp.write(file.read)
-    tmp.flush
-
-    im = Magick::Image.read(filename)
+    filename = File.basename(file.path)
+    im = Magick::Image.read(file.path)
     im[0].write(filename + ".jpg")
 
     # Ejecutar tesseract y capturar salida
@@ -38,7 +33,7 @@ class OcrService
     confidence = 0.85
     coordinates =  @@locations_to_coordinates[location]
     lat = coordinates[0]
-    lon = coordinates[1];
+    lon = coordinates[1]
 
     {
       "raw_text" => text.strip,
@@ -49,7 +44,7 @@ class OcrService
       "confidence" => confidence
     }
   ensure
-    tmp.close!
-    tmp.unlink
+    file.close!
+    file.unlink
   end
 end

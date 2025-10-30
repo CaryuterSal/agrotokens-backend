@@ -20,7 +20,7 @@ class ProcessCertificateJob < ApplicationJob
       unsigned_tx = SorobanService.build_unsigned_certificate_tx(cert, cert.uploader_wallet)
       cert.update!(
         status: "awaiting_signature",
-        unsigned_tx: unsigned_tx["transaction"] # guardamos el base64
+        unsigned_tx: unsigned_tx # guardamos el base64
       )
     else
       cert.update!(status: "review")

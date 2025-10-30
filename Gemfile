@@ -6,6 +6,7 @@ gem "rails", "~> 8.0.2", ">= 8.0.2.1"
 gem "propshaft"
 gem 'rmagick'
 gem 'multipart-post'
+gem 'rack-cors', require: 'rack/cors'
 
 
 # Use postgresql as the database for Active Record
@@ -67,6 +68,7 @@ group :test do
 end
 
 gem "sidekiq", "~> 8.0"
-gem "stellar-sdk", "~> 0.23.1"
 gem "httparty", "~> 0.23.2"
 gem "ipfs-http-client", "~> 0.3.2"
+
+gem "stellar-sdk", "~> 0.23.1"
